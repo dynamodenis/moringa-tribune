@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,Http404
 import datetime as dt
+from .models import Article
 
 # Create your views here.
 def welcome(request):
@@ -8,15 +9,8 @@ def welcome(request):
 
 def news_of_day(request):
     date=dt.date.today()
-    # day=convert_dates(date)
-    # html=f'''
-    #     <html>
-    #         <body>
-    #             <h1>News for {day} {date.day}-{date.month}-{date.year}</h1>
-    #         </body>
-    #     </html>
-    #         '''
-    return render(request,'all-news/today_news.html',{'date':date})
+    news=Article.get_today()
+    return render(request,'all-news/today_news.html',{'date':date,'news':news})
 
 def convert_dates(dates):
     #FUNCTION THAT RETUNS THE DAY O THE WEEKEND
@@ -38,12 +32,5 @@ def past_days_news(request,past_date):
 
     if date== dt.datetime.today():
         return redirect(news_of_day)
-    # day = convert_dates(date)
-    # html = f'''
-    #     <html>
-    #         <body>
-    #             <h1>News for {day} {date.day}-{date.month}-{date.year}</h1>
-    #         </body>
-    #     </html>
-    #         '''
-    return render(request,'all-news/past_news.html',{'date':date})
+    news=Article.days_news(date)
+    return render(request,'all-news/past_news.html',{'date':date,'news':news})
